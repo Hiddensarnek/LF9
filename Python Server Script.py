@@ -41,7 +41,7 @@ todos = [
 @app.after_request
 def apply_cors_header(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE,PATCH'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
@@ -60,9 +60,16 @@ def handle_list(list_id):
     if request.method == 'GET':
         # find all todo entries for the todo list with the given id
         print('Returning todo list...')
-        return jsonify([i for i in todos if i['list'] == list_id])
+        return jsonify([i for i in todos if i['list'] == list_id]),200
     elif request.method == 'DELETE':
         # delete list with given id
+        for l in todo_lists:
+            if l['id'] == list_id:
+                list_item = l
+                break
+        # if the given list id is invalid, return status code 404
+        if not list_item:
+            abort(404)
         print('Deleting todo list...')
         todo_lists.remove(list_item)
         return '', 200
@@ -73,9 +80,11 @@ def handle_list(list_id):
 def add_new_list():
     # make JSON from POST data (even if content type is not set correctly)
     new_list = request.get_json(force=True)
+    if not new_list:
+        abort(500)
     print('Got new list to be added: {}'.format(new_list))
     # create id for new list, save it and return the list with id
-    new_list['id'] = uuid.uuid4()
+    new_list['id'] = str(uuid.uuid4())
     todo_lists.append(new_list)
     return jsonify(new_list), 200
 
@@ -83,7 +92,9 @@ def add_new_list():
 # define endpoint for getting all lists
 @app.route('/lists', methods=['GET'])
 def get_all_lists():
-    return jsonify(todo_lists)
+    if not todo_lists:
+        abort(500)  
+    return jsonify(todo_lists), 200
 
 
 @app.route('/list/<list_id>/item', methods=['POST'])
@@ -92,8 +103,10 @@ def add_item_to_list(list_id):
     if not list_item:
         abort(404)
     new_item = request.get_json(force=True)
+    if not new_item:
+        abort(500)
     new_item['id'] = str(uuid.uuid4())
-    new_item['list_id'] = list_id
+    new_item['list'] = list_id
     todos.append(new_item)
     return jsonify(new_item), 200
 
