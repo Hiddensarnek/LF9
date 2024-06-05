@@ -44,4 +44,4 @@ git clone https://github.com/Hiddensarnek/LF9-AlexPaul.git
 cd LF9-AlexPaul
 sudo docker-compose up -d
 ```
-
+Nun kann man die Web-App mit  http://192.168.24.188:5000 erreichen.
