@@ -20,14 +20,14 @@ sudo adduser fernzugriff
 sudo usermod -aG sudo fernzugriff
 ```
 # SSH-Dienst 
-## 1. SSH installieren
+## SSH installieren
 ```
 sudo apt update
 sudo apt install openssh-server
 sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
-## 2. "Fernzugriff" hinzufügen
+## "Fernzugriff" hinzufügen zu SSH
 ```
 sudo nano /etc/ssh/sshd_config
 AllowUsers fernzugriff
