@@ -3,7 +3,7 @@ info:
   title: Todo-Listen-Verwaltung
   description: ""
   contact:
-    email: alexander.lider@bbs-os-brinkstr.de
+    email: p.sevenich@web.de
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -57,6 +57,39 @@ paths:
         404:
           description: Invalid list id
           content: {}
+        500:
+          description: delete not possible
+    patch:
+      tags:
+      - Listenverwaltung
+      operationId: patchList
+      parameters:
+      - name: list_id
+        in: path
+        description: list id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: list object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoList'
+        required: true
+      responses:
+        200:
+          description: List of TodoLists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoList'
+        404:
+          description: list_id invalid
+          content: {}
+        500:
+          description: List could patched
+          content: {}
   /list:
     post:
       tags:
@@ -71,7 +104,7 @@ paths:
               $ref: '#/components/schemas/TodoList'
         required: true
       responses:
-        200:
+        201:
           description: List added
           content:
             application/json:
@@ -81,60 +114,72 @@ paths:
           description: List could not be added
           content: {}
       x-codegen-request-body-name: body
-    /list/{list_id}/item:
-    post:
+  /lists:
+    get:
       tags:
       - Listenverwaltung
-      summary: Add new item to list
+      summary: returns list of all lists
+      operationId: getLists
+      responses:
+        200:
+          description: List of TodoLists
+          content: {}
+        500:
+          description: failed to deliver data
+  /list/{list_id}/item:
+    post:
+      tags:
+        - Itemverwaltung
+      summary: Add a new Item to List corresponding to list_id
       operationId: addItem
       parameters:
-      - name: list_id
-        in: path
-        description: list id
-        required: true
-        schema:
-          type: string
+        - name: list_id
+          in: path
+          description: list id
+          required: true
+          schema:
+            type: string
       requestBody:
-        description: item object
+        description: List-Item object
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TodoEntry'
         required: true
       responses:
-        200:
-          description: Item added
+        201:
+          description: list-item object
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoEntry'
-        404:
-          description: Invalid list id
-          content: {}
         500:
-          description: Item could not be added
+          description: add list-item not possible
+          content: {}
+        404:
+          description: list_id invalid
           content: {}
   /list/{list_id}/item/{item_id}:
     patch:
       tags:
-      - Listenverwaltung
-      summary: Update an item in the list
-      operationId: updateItem
+        - Itemverwaltung
+      summary: Add a new Item to List corresponding to list_id
+      operationId: addItem
       parameters:
-      - name: list_id
-        in: path
-        description: list id
-        required: true
-        schema:
-          type: string
-      - name: item_id
-        in: path
-        description: item id
-        required: true
-        schema:
-          type: string
+        - name: list_id
+          in: path
+          description: list id
+          required: true
+          schema:
+            type: string
+        - name: item_id
+          in: path
+          description: item id
+          required: true
+          schema:
+            type: string
       requestBody:
-        description: item object
+        description: List-Item object
         content:
           application/json:
             schema:
@@ -142,22 +187,20 @@ paths:
         required: true
       responses:
         200:
-          description: Item updated
+          description: list-item object
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TodoEntry'
-        404:
-          description: Invalid list or item id
-          content: {}
         500:
-          description: Item could not be updated
+          description: update list-item not possible
+          content: {}
+        404:
+          description: list_id or item_id invalid
           content: {}
     delete:
-      tags:
-      - Listenverwaltung
-      summary: Delete an item from the list
-      operationId: deleteItem
+      summary: Delete a list
+      operationId: deleteListItem
       parameters:
       - name: list_id
         in: path
@@ -173,10 +216,13 @@ paths:
           type: string
       responses:
         200:
-          description: Item deleted
+          description: List-item was deleted
           content: {}
         404:
-          description: Invalid list or item id
+          description: Invalid list id or item id
+          content: {}
+        500:
+          description: delete not possible
           content: {}
 components:
   schemas:
