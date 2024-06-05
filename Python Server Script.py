@@ -9,7 +9,7 @@ Requirements:
 
 import uuid 
 
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort 
 
 
 # initialize Flask server
@@ -19,10 +19,10 @@ app = Flask(__name__)
 todo_list_1_id = '1318d3d1-d979-47e1-a225-dab1751dbe75'
 todo_list_2_id = '3062dc25-6b80-4315-bb1d-a7c86b014c65'
 todo_list_3_id = '44b02e00-03bc-451d-8d01-0c67ea866fee'
-todo_1_id = uuid.uuid4()
-todo_2_id = uuid.uuid4()
-todo_3_id = uuid.uuid4()
-todo_4_id = uuid.uuid4()
+todo_1_id = str(uuid.uuid4())
+todo_2_id = str(uuid.uuid4())
+todo_3_id = str(uuid.uuid4())
+todo_4_id = str(uuid.uuid4())
 
 # define internal data structures with example data
 todo_lists = [
@@ -113,7 +113,7 @@ def add_item_to_list(list_id):
 @app.route('/list/<list_id>/item/<item_id>', methods=['DELETE'])
 def delete_item_from_list(list_id, item_id):
     list_item = next((l for l in todo_lists if l['id'] == list_id), None)
-    item = next((i for i in todos if i['id'] == item_id and i['list_id'] == list_id), None)
+    item = next((i for i in todos if i['id'] == item_id and i['list'] == list_id), None)
     if not list_item or not item:
         abort(404)
     todos.remove(item)
@@ -121,9 +121,10 @@ def delete_item_from_list(list_id, item_id):
 
 @app.route('/list/<list_id>/item/<item_id>', methods=['PATCH'])
 def update_item_in_list(list_id, item_id):
-    list_item = next((l for l in todo_lists if l['id'] == list_id), None)
-    item = next((i for i in todos if i['id'] == item_id and i['list_id'] == list_id), None)
+    list_item = next((l for l in todo_lists if l['id'] == list_id),None)
+    item = next((i for i in todos if i['id'] == item_id and i['list'] == list_id),None)
     if not list_item or not item:
+        print("TEST")
         abort(404)
     update_data = request.get_json(force=True)
     item.update(update_data)
