@@ -1,6 +1,6 @@
 services:
   verandb:
-    build: https://github.com/JassemDev/MyProject_LF.9.git
+    build: https://github.com/Hiddensarnek/LF9-AlexPaul.git
     image: verandb
     restart: always
     ports:
