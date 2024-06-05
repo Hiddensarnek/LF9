@@ -28,9 +28,16 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 ```
 ## "Fernzugriff" hinzufügen zu SSH
+SSH-Dienst konfigurieren
 ```
 sudo nano /etc/ssh/sshd_config
+```
+Fernzugriff hinzufügen
+```
 AllowUsers fernzugriff
+```
+SSH-Dienst neu starten
+``` 
 sudo systemctl restart ssh
 ```
 # Docker und Docker Compose installieren
